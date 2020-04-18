@@ -37,3 +37,6 @@ def test():
         print("batch index ", i_batch)
         plt.show()
         plt.close()
+
+if __name__=='__main__':
+    test()
