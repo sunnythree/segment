@@ -23,7 +23,8 @@ class SegDataSet(Dataset):
         self.radio = label_size/orgin_size
         self.pic_strong = tfs.Compose([
             tfs.ColorJitter(0.5, 0.2, 0.2, 0.1),
-            tfs.ToTensor()
+            tfs.ToTensor(),
+            tfs.Normalize(mean=(0.5, 0.5, 0.5), std=(0.5, 0.5, 0.5))
         ])
         self.pic_image2tensor = tfs.Compose([
             tfs.ToTensor()
@@ -68,7 +69,7 @@ def pic_resize2square(img, des_size, rand_p=None, is_random=True):
     if rows > cols:
         scale_rate = des_size/rows
         new_cols = math.ceil(cols*scale_rate)
-        print(rows, cols, new_rows, new_cols, scale_rate)
+        # print(rows, cols, new_rows, new_cols, scale_rate)
         if rand_p is None:
             if is_random:
                 rand_x = random.randint(0, math.floor(new_rows - new_cols))
@@ -77,7 +78,7 @@ def pic_resize2square(img, des_size, rand_p=None, is_random=True):
     elif cols > rows:
         scale_rate = des_size/cols
         new_rows = math.ceil(rows*scale_rate)
-        print(rows, cols, new_rows, new_cols, scale_rate)
+        # print(rows, cols, new_rows, new_cols, scale_rate)
         if rand_p is None:
             if is_random:
                 rand_y = random.randint(0, math.floor(new_cols - new_rows))
@@ -118,5 +119,5 @@ def test_dataset():
         plt.show()
         plt.close()
 
-test_dataset()
+#test_dataset()
 
