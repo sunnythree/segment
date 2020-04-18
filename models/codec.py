@@ -147,5 +147,5 @@ class CodecNet(nn.Module):
         return x
 
 def CodecNet13():
-    model = CodecNet(BasicBlock, [2, 2, 2, 2])
+    model = CodecNet(BasicBlock, [1, 1, 1, 1])
     return model
