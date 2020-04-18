@@ -23,7 +23,7 @@ def parse_args():
     return parser.parse_args()
 
 def train(args):
-    data_loader = DataLoader(dataset=SegDataSet(224, 224, True), batch_size=args.batch, shuffle=True)
+    data_loader = DataLoader(dataset=SegDataSet(224, 224, True), batch_size=args.batch, shuffle=True, num_workers=8)
     use_cuda = torch.cuda.is_available()
     device = torch.device("cuda" if use_cuda else "cpu")
     model = CodecNet13()
