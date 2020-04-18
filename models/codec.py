@@ -40,7 +40,7 @@ class BasicBlock(nn.Module):
 
 
 class Bottleneck(nn.Module):
-    expansion = 4
+    expansion = 1
 
     def __init__(self, inplanes, planes, stride=1, downsample=None):
         super(Bottleneck, self).__init__()
@@ -82,23 +82,23 @@ class Bottleneck(nn.Module):
 class CodecNet(nn.Module):
     def __init__(self, block, layers):
         super(CodecNet, self).__init__()
-        self.inplanes = 64
-        self.conv1 = nn.Conv2d(3, 64, kernel_size=7, stride=2, padding=3,
+        self.inplanes = 32
+        self.conv1 = nn.Conv2d(3, 32, kernel_size=5, stride=2, padding=2,
                                bias=False)
-        self.bn1 = nn.BatchNorm2d(64)
+        self.bn1 = nn.BatchNorm2d(32)
         self.relu = nn.ReLU(inplace=True)
         self.maxpool = nn.MaxPool2d(kernel_size=2, stride=2, return_indices=True)
-        self.layer1 = self._make_layer(block, 64, layers[0])
-        self.layer2 = self._make_layer(block, 128, layers[1], stride=2)
-        self.layer3 = self._make_layer(block, 256, layers[2], stride=2)
-        self.layer4 = self._make_layer(block, 512, layers[3], stride=2)
+        self.layer1 = self._make_layer(block, 32, layers[0])
+        self.layer2 = self._make_layer(block, 64, layers[1], stride=2)
+        self.layer3 = self._make_layer(block, 128, layers[2], stride=2)
+        self.layer4 = self._make_layer(block, 256, layers[3], stride=2)
 
         #transpose conv
-        self.convt1 = nn.ConvTranspose2d(512, 256, 3, padding=1, stride=2, output_padding=1)
-        self.convt2 = nn.ConvTranspose2d(256, 128, 3, padding=1, stride=2, output_padding=1)
-        self.convt3 = nn.ConvTranspose2d(128, 64, 3, padding=1, stride=2, output_padding=1)
+        self.convt1 = nn.ConvTranspose2d(256, 128, 3, padding=1, stride=2, output_padding=1)
+        self.convt2 = nn.ConvTranspose2d(128, 64, 3, padding=1, stride=2, output_padding=1)
+        self.convt3 = nn.ConvTranspose2d(64, 32, 3, padding=1, stride=2, output_padding=1)
         self.maxunpool = nn.MaxUnpool2d(2, stride=2)
-        self.convt4 = nn.ConvTranspose2d(64, 21, 7, padding=3, stride=2, output_padding=1)
+        self.convt4 = nn.ConvTranspose2d(32, 22, 7, padding=3, stride=2, output_padding=1)
 
         for m in self.modules():
             if isinstance(m, nn.Conv2d):
@@ -143,7 +143,7 @@ class CodecNet(nn.Module):
         x6 += x
         x = self.maxunpool(x6, indices)
         x = self.convt4(x)
-        x = F.softmax(x, dim=1)
+        x = F.log_softmax(x, dim=1)
         return x
 
 def CodecNet13():

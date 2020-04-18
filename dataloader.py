@@ -1,9 +1,6 @@
 from torch.utils.data import DataLoader
 from torchvision import transforms as tfs
 from torch.utils.data import Dataset
-import torch
-import cv2 as cv
-import numpy as np
 import random
 import math
 from PIL import Image
@@ -23,8 +20,7 @@ class SegDataSet(Dataset):
         self.radio = label_size/orgin_size
         self.pic_strong = tfs.Compose([
             tfs.ColorJitter(0.5, 0.2, 0.2, 0.1),
-            tfs.ToTensor(),
-            tfs.Normalize(mean=(0.5, 0.5, 0.5), std=(0.5, 0.5, 0.5))
+            tfs.ToTensor()
         ])
         self.pic_image2tensor = tfs.Compose([
             tfs.ToTensor()
@@ -51,6 +47,7 @@ class SegDataSet(Dataset):
         label_img = Image.open(PICS_PATH + SEGMENT_PATH+self.pics[item]+".png")
         label_img, _ = pic_resize2square(label_img, self.label_size, (int(rand_p[0]*self.radio), int(rand_p[1]*self.radio)))
         label_tensor = self.pic_image2tensor(label_img)
+        label_tensor *= 255
         return {"img": img_tensor, "label": label_tensor}
 
 
