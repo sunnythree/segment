@@ -52,10 +52,12 @@ def train(args):
             optimizer.step()
             train_loss = loss.item()
             global_step = epoch*len(data_loader)+i_batch
-            progress_bar(i_batch, len(data_loader), 'loss: '+str(train_loss)+" | epoes: "+str(epoch))
+            progress_bar(i_batch, len(data_loader), 'loss: '+str(round(train_loss), 5)+" | epoes: "+str(epoch))
             writer.add_scalar("loss", train_loss, global_step=global_step)
-            if i_batch % 10 == 0:
-                writer.add_image(str(i_batch), class2color(output)[0])
+
+        #save one pic and output
+        writer.add_image("img: "+str(epoch), img_tensor[0])
+        writer.add_image("output: "+str(epoch), class2color(output)[0])
         scheduler.step()
 
     if not os.path.isdir('data'):
