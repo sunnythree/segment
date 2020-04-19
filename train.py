@@ -52,7 +52,7 @@ def train(args):
             optimizer.step()
             train_loss = loss.item()
             global_step = epoch*len(data_loader)+i_batch
-            progress_bar(i_batch, len(data_loader), 'loss: '+str(round(train_loss), 5)+" | epoes: "+str(epoch))
+            progress_bar(i_batch, len(data_loader), 'loss: '+str(round(train_loss, 5))+" | epoes: "+str(epoch))
             writer.add_scalar("loss", train_loss, global_step=global_step)
 
         #save one pic and output
