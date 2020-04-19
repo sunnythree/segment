@@ -52,7 +52,7 @@ def train(args):
             optimizer.step()
             train_loss = loss.item()
             global_step = epoch*len(data_loader)+i_batch
-            progress_bar(i_batch, len(data_loader), 'loss: '+str(train_loss)+" | batch: "+str(global_step))
+            progress_bar(i_batch, len(data_loader), 'loss: '+str(train_loss)+" | epoes: "+str(epoch))
             writer.add_scalar("loss", train_loss, global_step=global_step)
             if i_batch % 10 == 0:
                 writer.add_image(str(i_batch), class2color(output)[0])
