@@ -47,12 +47,12 @@ COLOR_GET_INDEX = {
      192*256: 18,
      128*256*256 + 192*256: 19,
      64*256 + 128: 20,
-     224*256*256 + 224*256 + 192: 21}
+     224*256*256 + 224*256 + 192: 0}
 
 def color2class(color_tensor):
     assert color_tensor.dim() == 4 and color_tensor.shape[1] == 3
     color_tensor_shape = color_tensor.shape
-    class_tensor_shape = (color_tensor_shape[0], 22, color_tensor_shape[2], color_tensor_shape[3])
+    class_tensor_shape = (color_tensor_shape[0], 21, color_tensor_shape[2], color_tensor_shape[3])
     class_tensor = torch.zeros(class_tensor_shape)
     for i in range(color_tensor_shape[0]):
         for j in range(color_tensor_shape[2]):
@@ -61,6 +61,7 @@ def color2class(color_tensor):
                 tmp_key = (int(tmp[0]) & ~0xf)*256*256 + (int(tmp[1]) & ~0xf)*256+int(tmp[2]) & ~0xf
                 #print(tmp_key,tmp)
                 index = COLOR_GET_INDEX[tmp_key]
+                print(index, end='')
                 tmp1 = class_tensor[i, :, j, k]
                 tmp1[index] = 1
     return class_tensor
@@ -82,7 +83,7 @@ def color2class2(color_tensor):
 
 
 def class2color(class_tensor):
-    assert class_tensor.dim() == 4 and class_tensor.shape[1] == 22
+    assert class_tensor.dim() == 4 and class_tensor.shape[1] == 21
     class_tensor_shape = class_tensor.shape
     color_tensor_shape = (class_tensor_shape[0], 3, class_tensor_shape[2], class_tensor_shape[3])
     color_tensor = torch.zeros(color_tensor_shape)

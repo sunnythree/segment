@@ -25,11 +25,12 @@ def parse_args():
 
 def train(args):
     start_epoch = 0
-    data_loader = DataLoader(dataset=SegDataSet(96, 96, True), batch_size=args.batch, shuffle=True, num_workers=8)
+    data_loader = DataLoader(dataset=SegDataSet(160, 160, True), batch_size=args.batch, shuffle=True, num_workers=8)
     use_cuda = torch.cuda.is_available()
     device = torch.device("cuda" if use_cuda else "cpu")
-    model = CodecNet13()
-    writer.add_graph(model, torch.zeros((1, 3, 96, 96)))
+    # pretrained_net = FeatureResNet()
+    model = CodecNet13(21)
+    writer.add_graph(model, torch.zeros((1, 3, 160, 160)))
     if args.pretrained and os.path.exists(MODEL_SAVE_PATH):
         state = torch.load(MODEL_SAVE_PATH)
         model.load_state_dict(state['net'])
@@ -38,7 +39,7 @@ def train(args):
     optimizer = optim.Adam(model.parameters(), lr=args.lr, weight_decay=1e-5)
     scheduler = StepLR(optimizer, step_size=args.step, gamma=args.gama)
     train_loss = 0
-    loss_func = torch.nn.NLLLoss()
+    loss_func = torch.nn.NLLLoss().to(device)
     for epoch in range(start_epoch, start_epoch+args.epoes):
         model.train()
         for i_batch, sample_batched in enumerate(data_loader):

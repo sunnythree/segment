@@ -6,7 +6,7 @@ import math
 from PIL import Image
 import matplotlib.pyplot as plt
 
-PICS_PATH = "/home/javer/work/dataset/voc/VOCdevkit/VOC2012"
+PICS_PATH = "/home/javer/work/dataset/voc/VOCdevkit/VOC2007"
 ORIGIN_PATH = "/JPEGImages/"
 SEGMENT_PATH = "/SegmentationClass/"
 TRAIN_FILE_PATH = "/ImageSets/Segmentation/train.txt"
