@@ -37,7 +37,6 @@ def test():
         ax1.imshow(transform(img_tensor[0]))
         ax2.imshow(transform(label_tensor[0]))
         ax3.imshow(transform(predict_tensor[0]))
-        print("batch index ", i_batch)
         plt.show()
         plt.close()
 
