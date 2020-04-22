@@ -27,13 +27,16 @@ def test():
     transform = tfs.Compose([tfs.ToPILImage()])
     for i_batch, sample_batched in enumerate(data_loader):
         img_tensor = sample_batched["img"].to(device)
+        label_tensor = sample_batched["label"].to(device)
         output = model(img_tensor)
-        color_tensor = class2color(output)
+        predict_tensor = class2color(output)
         fig = plt.figure(num=1, figsize=(15, 8), dpi=80)  # 开启一个窗口，同时设置大小，分辨率
-        ax1 = fig.add_subplot(1, 2, 1)  # 通过fig添加子图，参数：行数，列数，第几个。
-        ax2 = fig.add_subplot(1, 2, 2)  # 通过fig添加子图，参数：行数，列数，第几个。
-        ax1.imshow(transform(sample_batched['img'][0]))
-        ax2.imshow(transform(color_tensor[0]))
+        ax1 = fig.add_subplot(1, 3, 1)  # 通过fig添加子图，参数：行数，列数，第几个。
+        ax2 = fig.add_subplot(1, 3, 2)  # 通过fig添加子图，参数：行数，列数，第几个。
+        ax3 = fig.add_subplot(1, 3, 3)  # 通过fig添加子图，参数：行数，列数，第几个。
+        ax1.imshow(transform(img_tensor[0]))
+        ax2.imshow(transform(label_tensor[0]))
+        ax3.imshow(transform(predict_tensor[0]))
         print("batch index ", i_batch)
         plt.show()
         plt.close()
