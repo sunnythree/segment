@@ -1,7 +1,7 @@
 import time
 import sys
 
-term_width = 50
+term_width = 150
 TOTAL_BAR_LENGTH = 65.
 last_time = time.time()
 begin_time = last_time
