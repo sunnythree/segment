@@ -13,10 +13,12 @@ MODEL_SAVE_PATH = "./data/codec_seg.pt"
 def test():
     data_loader = DataLoader(dataset=SegDataSet(96, 96, True), batch_size=1, shuffle=True, num_workers=1)
     use_cuda = torch.cuda.is_available()
-    device = torch.device("cuda" if use_cuda else "cpu")
-    model = CodecNet13()
+    #device = torch.device("cuda" if use_cuda else "cpu")
+    device = torch.device("cpu")
+    model = CodecNet13(21)
     if os.path.exists(MODEL_SAVE_PATH):
-        model.load_state_dict(torch.load(MODEL_SAVE_PATH))
+        state = torch.load(MODEL_SAVE_PATH)
+        model.load_state_dict(state['net'])
     else:
         print("no model file error")
         return
@@ -25,15 +27,13 @@ def test():
     transform = tfs.Compose([tfs.ToPILImage()])
     for i_batch, sample_batched in enumerate(data_loader):
         img_tensor = sample_batched["img"].to(device)
-        label_tensor = sample_batched["label"]
-        label_tensor = color2class(label_tensor.int()).to(device)
         output = model(img_tensor)
         color_tensor = class2color(output)
         fig = plt.figure(num=1, figsize=(15, 8), dpi=80)  # 开启一个窗口，同时设置大小，分辨率
         ax1 = fig.add_subplot(1, 2, 1)  # 通过fig添加子图，参数：行数，列数，第几个。
         ax2 = fig.add_subplot(1, 2, 2)  # 通过fig添加子图，参数：行数，列数，第几个。
         ax1.imshow(transform(sample_batched['img'][0]))
-        ax2.imshow(transform(sample_batched['label'][0]))
+        ax2.imshow(transform(color_tensor[0]))
         print("batch index ", i_batch)
         plt.show()
         plt.close()
