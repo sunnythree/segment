@@ -31,7 +31,7 @@ class SegDataSet(Dataset):
                 self.pics.append(line.replace('\n', ''))
         else:
             for line in open(PICS_PATH+"/"+VAL_FILE_PATH):
-                self.pics.append(line)
+                self.pics.append(line.replace('\n', ''))
 
     def __len__(self):
         return len(self.pics)
