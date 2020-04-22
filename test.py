@@ -11,7 +11,7 @@ from torchvision import transforms as tfs
 MODEL_SAVE_PATH = "./data/codec_seg.pt"
 
 def test():
-    data_loader = DataLoader(dataset=SegDataSet(160, 160, True), batch_size=1, shuffle=True, num_workers=1)
+    data_loader = DataLoader(dataset=SegDataSet(160, 160, False), batch_size=1, shuffle=True, num_workers=1)
     use_cuda = torch.cuda.is_available()
     #device = torch.device("cuda" if use_cuda else "cpu")
     device = torch.device("cpu")
