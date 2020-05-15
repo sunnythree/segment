@@ -17,6 +17,7 @@ VAL_FILE_PATH = "/ImageSets/Segmentation/val.txt"
 
 class SegDataSet(Dataset):
     def __init__(self, orgin_size, label_size, is_train=True):
+        self.is_train = is_train
         self.orgin_size = orgin_size
         self.label_size = label_size
         self.radio = label_size/orgin_size
@@ -30,6 +31,7 @@ class SegDataSet(Dataset):
         self.pics = []
         self.imgs = []
         self.labels = []
+        fname = ""
         if is_train:
             for line in open(PICS_PATH+TRAIN_FILE_PATH):
                 fname = line.replace('\n', '')
@@ -48,16 +50,31 @@ class SegDataSet(Dataset):
                 label_tensor *= 255
                 label_tensor = color2class(label_tensor)
                 self.labels.append(label_tensor)
-
         else:
             for line in open(PICS_PATH+"/"+VAL_FILE_PATH):
                 self.pics.append(line.replace('\n', ''))
+
 
     def __len__(self):
         return len(self.pics)
 
     def __getitem__(self, item):
-        return self.imgs[item], self.labels[item]
+        if self.is_train:
+            return self.imgs[item], self.labels[item]
+        else:
+            # img
+            img = Image.open(PICS_PATH + ORIGIN_PATH + self.pics[item] + ".jpg")
+            img, rand_p = pic_resize2square(img, self.orgin_size, None, True)
+            img_tensor = self.pic_strong(img)
+
+            # label
+            label_img = Image.open(PICS_PATH + SEGMENT_PATH + self.pics[item] + ".png")
+            label_img, _ = pic_resize2square(label_img, self.label_size,
+                                             (int(rand_p[0] * self.radio), int(rand_p[1] * self.radio)))
+            label_tensor = self.pic_image2tensor(label_img)
+            label_tensor *= 255
+            label_tensor = color2class(label_tensor)
+            return img_tensor, label_tensor
 
 
 class data_prefetcher():

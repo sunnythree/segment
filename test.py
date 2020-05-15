@@ -31,11 +31,10 @@ def test():
         output = model(img_tensor)
         predict_tensor = class2color(output)
         fig = plt.figure(num=1, figsize=(15, 8), dpi=80)  # 开启一个窗口，同时设置大小，分辨率
-        ax1 = fig.add_subplot(1, 3, 1)  # 通过fig添加子图，参数：行数，列数，第几个。
-        ax2 = fig.add_subplot(1, 3, 2)  # 通过fig添加子图，参数：行数，列数，第几个。
-        ax3 = fig.add_subplot(1, 3, 3)  # 通过fig添加子图，参数：行数，列数，第几个。
+        ax1 = fig.add_subplot(1, 2, 1)  # 通过fig添加子图，参数：行数，列数，第几个。
+        ax2 = fig.add_subplot(1, 2, 2)  # 通过fig添加子图，参数：行数，列数，第几个。
         ax1.imshow(transform(img_tensor[0]))
-        ax3.imshow(transform(predict_tensor[0]))
+        ax2.imshow(transform(predict_tensor[0]))
         plt.show()
         plt.close()
 
