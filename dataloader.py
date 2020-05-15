@@ -57,7 +57,7 @@ class SegDataSet(Dataset):
         return len(self.pics)
 
     def __getitem__(self, item):
-        return imgs[item], label_tensor[item]
+        return self.imgs[item], self.labels[item]
 
 
 class data_prefetcher():
