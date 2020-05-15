@@ -11,7 +11,7 @@ from torchvision import transforms as tfs
 MODEL_SAVE_PATH = "./data/codec_seg.pt"
 
 def test():
-    data_loader = DataLoader(dataset=SegDataSet(160, 160, False), batch_size=1, shuffle=True, num_workers=1)
+    data_loader = DataLoader(dataset=SegDataSet(224, 224, False), batch_size=1, shuffle=True, num_workers=1)
     use_cuda = torch.cuda.is_available()
     #device = torch.device("cuda" if use_cuda else "cpu")
     device = torch.device("cpu")
@@ -26,8 +26,8 @@ def test():
 
     transform = tfs.Compose([tfs.ToPILImage()])
     for i_batch, sample_batched in enumerate(data_loader):
-        img_tensor = sample_batched["img"].to(device)
-        label_tensor = sample_batched["label"].to(device)
+        img_tensor = sample_batched[0].to(device)
+        label_tensor = sample_batched[1].to(device)
         output = model(img_tensor)
         predict_tensor = class2color(output)
         fig = plt.figure(num=1, figsize=(15, 8), dpi=80)  # 开启一个窗口，同时设置大小，分辨率
@@ -35,7 +35,6 @@ def test():
         ax2 = fig.add_subplot(1, 3, 2)  # 通过fig添加子图，参数：行数，列数，第几个。
         ax3 = fig.add_subplot(1, 3, 3)  # 通过fig添加子图，参数：行数，列数，第几个。
         ax1.imshow(transform(img_tensor[0]))
-        ax2.imshow(transform(label_tensor[0]))
         ax3.imshow(transform(predict_tensor[0]))
         plt.show()
         plt.close()

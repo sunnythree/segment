@@ -28,9 +28,27 @@ class SegDataSet(Dataset):
             tfs.ToTensor()
         ])
         self.pics = []
+        self.imgs = []
+        self.labels = []
         if is_train:
             for line in open(PICS_PATH+TRAIN_FILE_PATH):
-                self.pics.append(line.replace('\n', ''))
+                fname = line.replace('\n', '')
+                self.pics.append(fname)
+                # img
+                img = Image.open(PICS_PATH + ORIGIN_PATH + fname + ".jpg")
+                img, rand_p = pic_resize2square(img, self.orgin_size, None, True)
+                img_tensor = self.pic_strong(img)
+                self.imgs.append(img_tensor)
+
+                # label
+                label_img = Image.open(PICS_PATH + SEGMENT_PATH + fname + ".png")
+                label_img, _ = pic_resize2square(label_img, self.label_size,
+                                                 (int(rand_p[0] * self.radio), int(rand_p[1] * self.radio)))
+                label_tensor = self.pic_image2tensor(label_img)
+                label_tensor *= 255
+                label_tensor = color2class(label_tensor)
+                self.labels.append(label_tensor)
+
         else:
             for line in open(PICS_PATH+"/"+VAL_FILE_PATH):
                 self.pics.append(line.replace('\n', ''))
@@ -39,19 +57,7 @@ class SegDataSet(Dataset):
         return len(self.pics)
 
     def __getitem__(self, item):
-        #img
-
-        img = Image.open(PICS_PATH + ORIGIN_PATH+self.pics[item]+".jpg")
-        img, rand_p = pic_resize2square(img, self.orgin_size, None, True)
-        img_tensor = self.pic_strong(img)
-
-        #label
-        label_img = Image.open(PICS_PATH + SEGMENT_PATH+self.pics[item]+".png")
-        label_img, _ = pic_resize2square(label_img, self.label_size, (int(rand_p[0]*self.radio), int(rand_p[1]*self.radio)))
-        label_tensor = self.pic_image2tensor(label_img)
-        label_tensor *= 255
-        label_tensor = color2class(label_tensor)
-        return img_tensor, label_tensor
+        return imgs[item], label_tensor[item]
 
 
 class data_prefetcher():

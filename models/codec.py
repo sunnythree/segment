@@ -47,23 +47,23 @@ class BasicBlockT(nn.Module):
 class CodecNet(nn.Module):
     def __init__(self, layers, class_num):
         super(CodecNet, self).__init__()
-        self.inplanes = 32
-        self.conv1 = nn.Conv2d(3, 32, kernel_size=5, stride=2, padding=2,
+        self.inplanes = 64
+        self.conv1 = nn.Conv2d(3, 64, kernel_size=5, stride=2, padding=2,
                                bias=False)
-        self.bn1 = nn.BatchNorm2d(32)
+        self.bn1 = nn.BatchNorm2d(64)
         self.relu = nn.ReLU()
         self.maxpool = nn.MaxPool2d(kernel_size=2, stride=2, return_indices=True)
-        self.layer1 = self._make_layer(BasicBlock, 32, layers[0])
-        self.layer2 = self._make_layer(BasicBlock, 64, layers[1], stride=2)
-        self.layer3 = self._make_layer(BasicBlock, 128, layers[2], stride=2)
-        self.layer4 = self._make_layer(BasicBlock, 256, layers[3], stride=2)
+        self.layer1 = self._make_layer(BasicBlock, 64, layers[0])
+        self.layer2 = self._make_layer(BasicBlock, 128, layers[1], stride=2)
+        self.layer3 = self._make_layer(BasicBlock, 256, layers[2], stride=2)
+        self.layer4 = self._make_layer(BasicBlock, 512, layers[3], stride=2)
 
         #transpose conv
-        self.layer_t1 = self._make_layer(BasicBlockT, 128, layers[4], stride=2, outpadding=1)
-        self.layer_t2 = self._make_layer(BasicBlockT, 64, layers[5], stride=2, outpadding=1)
-        self.layer_t3 = self._make_layer(BasicBlockT, 32, layers[6], stride=2, outpadding=1)
+        self.layer_t1 = self._make_layer(BasicBlockT, 256, layers[4], stride=2, outpadding=1)
+        self.layer_t2 = self._make_layer(BasicBlockT, 128, layers[5], stride=2, outpadding=1)
+        self.layer_t3 = self._make_layer(BasicBlockT, 64, layers[6], stride=2, outpadding=1)
         self.maxunpool = nn.MaxUnpool2d(2, stride=2)
-        self.conv_t4 = nn.ConvTranspose2d(32, class_num, kernel_size=5, stride=2, padding=2, output_padding=1)
+        self.conv_t4 = nn.ConvTranspose2d(64, class_num, kernel_size=5, stride=2, padding=2, output_padding=1)
 
         for m in self.modules():
             if isinstance(m, nn.Conv2d):

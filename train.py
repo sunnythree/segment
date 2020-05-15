@@ -25,15 +25,19 @@ def parse_args():
 
 def train(args):
     start_epoch = 0
-    data_loader = DataLoader(dataset=SegDataSet(224, 224, True), batch_size=args.batch, shuffle=True, num_workers=16)
+    print("start load data to memory")
+    data_loader = DataLoader(dataset=SegDataSet(224, 224, True), batch_size=args.batch, shuffle=True, num_workers=8)
+    print("data load finished")
     use_cuda = torch.cuda.is_available()
     device = torch.device("cuda:0" if use_cuda else "cpu")
     model = CodecNet13(21)
     writer.add_graph(model, torch.zeros((1, 3, 224, 224)))
     if args.pretrained and os.path.exists(MODEL_SAVE_PATH):
+        print("start load model")
         state = torch.load(MODEL_SAVE_PATH)
         model.load_state_dict(state['net'])
         start_epoch = state['epoch']
+        print("model load finished")
     model = torch.nn.DataParallel(model, device_ids=[0, 1])  # multi-GPU
     model.to(device)
     optimizer = optim.Adam(model.parameters(), lr=args.lr, weight_decay=1e-5)
