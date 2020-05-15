@@ -31,7 +31,6 @@ class SegDataSet(Dataset):
         self.pics = []
         self.imgs = []
         self.labels = []
-        fname = ""
         if is_train:
             for line in open(PICS_PATH+TRAIN_FILE_PATH):
                 fname = line.replace('\n', '')
@@ -39,7 +38,6 @@ class SegDataSet(Dataset):
                 # img
                 img = Image.open(PICS_PATH + ORIGIN_PATH + fname + ".jpg")
                 img, rand_p = pic_resize2square(img, self.orgin_size, None, True)
-                img_tensor = self.pic_strong(img)
                 self.imgs.append(img_tensor)
 
                 # label
@@ -51,7 +49,7 @@ class SegDataSet(Dataset):
                 label_tensor = color2class(label_tensor)
                 self.labels.append(label_tensor)
         else:
-            for line in open(PICS_PATH+"/"+VAL_FILE_PATH):
+            for line in open(PICS_PATH+"/"+TRAIN_FILE_PATH):
                 self.pics.append(line.replace('\n', ''))
 
 
@@ -60,12 +58,11 @@ class SegDataSet(Dataset):
 
     def __getitem__(self, item):
         if self.is_train:
-            return self.imgs[item], self.labels[item]
+            return self.pic_strong(self.imgs[item]), self.labels[item]
         else:
             # img
             img = Image.open(PICS_PATH + ORIGIN_PATH + self.pics[item] + ".jpg")
             img, rand_p = pic_resize2square(img, self.orgin_size, None, True)
-            img_tensor = self.pic_strong(img)
 
             # label
             label_img = Image.open(PICS_PATH + SEGMENT_PATH + self.pics[item] + ".png")
