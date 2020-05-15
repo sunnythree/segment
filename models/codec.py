@@ -31,14 +31,14 @@ class BasicBlock(nn.Module):
 class BasicBlockT(nn.Module):
     def __init__(self, inplanes, planes, stride=1, outpadding=0):
         super(BasicBlockT, self).__init__()
-        #self.conv1 = conv3x3t(inplanes, inplanes, stride=1)
+        self.conv1 = conv3x3t(inplanes, inplanes, stride=1)
         self.conv2 = conv3x3t(inplanes, planes, stride, outpadding)
         self.bn1 = nn.BatchNorm2d(planes)
         self.relu = nn.ReLU()
         self.stride = stride
 
     def forward(self, x):
-        #out = self.conv1(x)
+        out = self.conv1(x)
         out = self.conv2(x)
         out = self.bn1(out)
         out = self.relu(out)

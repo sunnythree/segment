@@ -5,6 +5,8 @@ import random
 import math
 from PIL import Image
 import matplotlib.pyplot as plt
+import torch
+from color_class import color2class
 
 PICS_PATH = "/home/javer/work/dataset/voc/VOCdevkit/VOC2007"
 ORIGIN_PATH = "/JPEGImages/"
@@ -48,8 +50,33 @@ class SegDataSet(Dataset):
         label_img, _ = pic_resize2square(label_img, self.label_size, (int(rand_p[0]*self.radio), int(rand_p[1]*self.radio)))
         label_tensor = self.pic_image2tensor(label_img)
         label_tensor *= 255
-        return {"img": img_tensor, "label": label_tensor}
+        label_tensor = color2class(label_tensor)
+        return img_tensor, label_tensor
 
+
+class data_prefetcher():
+    def __init__(self, loader):
+        self.loader = iter(loader)
+        self.stream = torch.cuda.Stream()
+        self.preload()
+
+    def preload(self):
+        try:
+            self.next_input, self.next_target = next(self.loader)
+        except StopIteration:
+            self.next_input = None
+            self.next_target = None
+            return
+        with torch.cuda.stream(self.stream):
+            self.next_input = self.next_input.cuda(non_blocking=True)
+            self.next_target = self.next_target.cuda(non_blocking=True)
+
+    def next(self):
+        torch.cuda.current_stream().wait_stream(self.stream)
+        input = self.next_input
+        target = self.next_target
+        self.preload()
+        return input, target
 
 def pic_resize2square(img, des_size, rand_p=None, is_random=True):
     rows = img.height

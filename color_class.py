@@ -50,35 +50,17 @@ COLOR_GET_INDEX = {
      224*256*256 + 224*256 + 192: 0}
 
 def color2class(color_tensor):
-    assert color_tensor.dim() == 4 and color_tensor.shape[1] == 3
+    assert color_tensor.shape[0] == 3
     color_tensor_shape = color_tensor.shape
-    class_tensor_shape = (color_tensor_shape[0], 21, color_tensor_shape[2], color_tensor_shape[3])
-    class_tensor = torch.zeros(class_tensor_shape)
-    for i in range(color_tensor_shape[0]):
-        for j in range(color_tensor_shape[2]):
-            for k in range(color_tensor_shape[3]):
-                tmp = color_tensor[i, :, j, k]
-                tmp_key = (int(tmp[0]) & ~0xf)*256*256 + (int(tmp[1]) & ~0xf)*256+int(tmp[2]) & ~0xf
-                #print(tmp_key,tmp)
-                index = COLOR_GET_INDEX[tmp_key]
-                print(index, end='')
-                tmp1 = class_tensor[i, :, j, k]
-                tmp1[index] = 1
-    return class_tensor
-
-def color2class2(color_tensor):
-    assert color_tensor.dim() == 4 and color_tensor.shape[1] == 3
-    color_tensor_shape = color_tensor.shape
-    class_tensor_shape = (color_tensor_shape[0], color_tensor_shape[2], color_tensor_shape[3])
+    class_tensor_shape = (color_tensor_shape[1], color_tensor_shape[2])
     class_tensor = torch.zeros(class_tensor_shape, dtype=torch.long)
-    for i in range(color_tensor_shape[0]):
+    for i in range(color_tensor_shape[1]):
         for j in range(color_tensor_shape[2]):
-            for k in range(color_tensor_shape[3]):
-                tmp = color_tensor[i, :, j, k]
-                tmp_key = (int(tmp[0]) & ~0xf)*256*256 + (int(tmp[1]) & ~0xf)*256+int(tmp[2]) & ~0xf
-                #print(tmp_key, tmp)
-                index = COLOR_GET_INDEX[tmp_key]
-                class_tensor[i, j, k] = int(index)
+            tmp = color_tensor[:, i, j]
+            tmp_key = (int(tmp[0]) & ~0xf)*256*256 + (int(tmp[1]) & ~0xf)*256+int(tmp[2]) & ~0xf
+            #print(tmp_key, tmp)
+            index = COLOR_GET_INDEX[tmp_key]
+            class_tensor[i, j] = int(index)
     return class_tensor
 
 
